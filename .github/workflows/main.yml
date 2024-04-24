@@ -1,0 +1,31 @@
+name: CI model to dockerhub
+
+# Trigger
+on:
+  pull_request:
+    branches:
+      - dev
+
+# Actions
+jobs:
+  build_docker_image:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check the repo
+      uses: actions/checkout@v2
+
+    - name: List files in repository
+      run: ls -R
+      
+    - name: Login to dockerhub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USER }}
+        password: ${{ secrets.DOCKERHUB_PASS }}
+
+    - name: Build docker image
+      run: docker build -t alexacoll/end-point-social-adds:dev .
+
+    - name: Docker push to Dockerhub
+      run: docker push alexacoll/end-point-social-adds:dev
